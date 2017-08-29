@@ -1,0 +1,9 @@
+{
+    "workbench.colorTheme": "Xcode_default",
+    "workbench.startupEditor": "newUntitledFile",
+    "atomKeymap.promptV3Features": true,
+    "editor.multiCursorModifier": "ctrlCmd",
+    "editor.formatOnPaste": false,
+    "editor.formatOnSave": true,
+    "editor.fontSize": 10
+}
