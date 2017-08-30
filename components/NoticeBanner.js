@@ -13,25 +13,28 @@ export default class NoticeBanner extends React.Component {
     componentDidMount() {
 
         Animated.sequence([
+            // show
             Animated.timing(
                 this.state.newy,
                 {
                     toValue: 0,
-                    duration: 500,
+                    duration: this.props.duration || 500,
                 }
             ),
+            // delay
             Animated.timing(
                 this.state.newy,
                 {
                     toValue: 0,
-                    duration: 3000,
+                    duration: this.props.delayDuration || 3000,
                 }
             ),
+            // hide
             Animated.timing(
                 this.state.newy,
                 {
-                    toValue: -1000,
-                    duration: 500,
+                    toValue: -1000, // hide banner
+                    duration: this.props.duration || 500,
                 }
             ),
         ]).start();
@@ -42,18 +45,18 @@ export default class NoticeBanner extends React.Component {
         return (
             <Animated.View
                 style={{
-                    backgroundColor: this.props.isError ? '#ee6e73' : 'green',
-                    position: 'absolute',
-                    right: 0,
-                    left: 0,
+                    backgroundColor: this.props.isError ? (this.props.bgColor || '#ee6e73') : (this.props.bgColor || 'green'),
+                    position: this.props.position || 'absolute',
+                    right: this.props.right || 0,
+                    left: this.props.left || 0,
                     zIndex: 99999,
-                    opacity: 0.9,
+                    opacity: this.props.opacity || 0.9,
                     flex: 1,
                     justifyContent: 'space-between',
                     top: newy,         // Bind opacity to animated value
                 }}
             >
-                <Text style={{ marginTop: 24, textAlign: 'center', fontWeight: 'bold', color: 'white' }}>
+                <Text style={{ marginTop: 24, textAlign: this.props.textAlign || 'center', fontWeight: 'bold', color: this.props.textColor || 'white' }}>
                     {this.props.message}
                 </Text>
             </Animated.View>
