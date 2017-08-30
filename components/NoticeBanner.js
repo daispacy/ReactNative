@@ -12,26 +12,26 @@ export default class NoticeBanner extends React.Component {
 
     componentDidMount() {
 
-        Animated.sequence([            // decay, then spring to start and twirl
-            Animated.timing(                  // Animate over time
-                this.state.newy,            // The animated value to drive
+        Animated.sequence([
+            Animated.timing(
+                this.state.newy,
                 {
-                    toValue: 0,                   // Animate to opacity: 1 (opaque)
-                    duration: 500,              // Make it take a while
+                    toValue: 0,
+                    duration: 500,
                 }
             ),
-            Animated.timing(                  // Animate over time
-                this.state.newy,            // The animated value to drive
+            Animated.timing(
+                this.state.newy,
                 {
-                    toValue: 0,                   // Animate to opacity: 1 (opaque)
-                    duration: 3000,              // Make it take a while
+                    toValue: 0,
+                    duration: 3000,
                 }
             ),
-            Animated.timing(                  // Animate over time
-                this.state.newy,            // The animated value to drive
+            Animated.timing(
+                this.state.newy,
                 {
-                    toValue: -1000,                   // Animate to opacity: 1 (opaque)
-                    duration: 500,              // Make it take a while
+                    toValue: -1000,
+                    duration: 500,
                 }
             ),
         ]).start();
