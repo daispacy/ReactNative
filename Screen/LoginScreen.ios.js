@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Button, Text, ActivityIndicator } from 'react-native';
 
 import InputView from '../components/ControlComponents/InputView';
+import NoticeBanner from '../components/NoticeBanner';
 
 export default class LoginScreen extends Component {
 
@@ -15,7 +16,7 @@ export default class LoginScreen extends Component {
       isErrorPassword: false,
       isErrorEmail: false,
       isError: props.isError,
-      isHasShowError: false
+      isHasShowError: false,
     }
     this.getTextFromComponent = this
       .getTextFromComponent
@@ -26,7 +27,9 @@ export default class LoginScreen extends Component {
 
   }
 
-  componentDidMount() { }
+  componentDidMount() {
+
+  }
 
   componentDidUpdate(prevProps, prevState) {
 
@@ -83,73 +86,63 @@ export default class LoginScreen extends Component {
       }
     }
     console.log(message);
-    if (!authFailed && !this.state.isHasShowError) {
-      setTimeout(() => {
-        console.log('oi vai cut chay vao day roi ma');
-        this.setState({ isHasShowError: true, isError: false })
-      }, 3000);
-    }
+
     return (
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          marginTop: 30,
-          flexGrow: 0.5
-        }}>
-        <View style={{
+      <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-start' }}>
+        {authFailed && message !== undefined && <NoticeBanner
+          isError={true}
+          message={message} />}
 
-        }}>
-          <Text
-            style={{
-              textAlign: 'center',
-              fontSize: 24,
-              color: 'green'
-            }}>{'Login'}</Text>
-        </View>
-        <View style={{
-          height: 170,
-          justifyContent: 'center'
-        }}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            marginTop: 50,
 
-          <View
-            style={{
-              justifyContent: 'flex-start',
-              marginLeft: 10,
-              marginRight: 10,
-              marginBottom: 30,
-              flex: 1
-            }}>
-            <InputView
-              identifier={'email'}
-              placeholder={'Email'}
-              isError={this.state.isErrorEmail}
-              onChangeText={(text, type) => {
-                this.getTextFromComponent(text, type)
-              }} />
-            <InputView
-              identifier={'password'}
-              isPassword={true}
-              isError={this.state.isErrorPassword}
-              placeholder={'Password'}
-              onChangeText={(text, type) => {
-                this.getTextFromComponent(text, type)
-              }} />
-          </View>
-          <View style={{ height: 40, justifyContent: 'center' }}>
-            {isFetching ? (
-              <ActivityIndicator />
-            )
-              : (
-                <Button title={'Sign In'} onPress={() => {
-                  if (!this.state.isErrorEmail && !this.state.isErrorPassword)
-                    return this.props.authUser(this.email, this.password);
+          }}>
+          <View style={{
+            height: 170,
+            justifyContent: 'center'
+          }}>
+
+            <View
+              style={{
+                justifyContent: 'flex-start',
+                marginLeft: 10,
+                marginRight: 10,
+                marginBottom: 30,
+                flex: 1
+              }}>
+              <InputView
+                identifier={'email'}
+                placeholder={'Email'}
+                isError={this.state.isErrorEmail}
+                onChangeText={(text, type) => {
+                  this.getTextFromComponent(text, type)
                 }} />
-              )}
-            {authFailed && message !== undefined && <Text>{message}</Text>}
-          </View>
+              <InputView
+                identifier={'password'}
+                isPassword={true}
+                isError={this.state.isErrorPassword}
+                placeholder={'Password'}
+                onChangeText={(text, type) => {
+                  this.getTextFromComponent(text, type)
+                }} />
+            </View>
+            <View style={{ height: 40, justifyContent: 'center' }}>
+              {isFetching ? (
+                <ActivityIndicator />
+              )
+                : (
+                  <Button title={'Sign In'} onPress={() => {
+                    if (!this.state.isErrorEmail && !this.state.isErrorPassword)
+                      return this.props.authUser(this.email, this.password);
+                  }} />
+                )}
+            </View>
 
+          </View>
         </View>
       </View>
     );

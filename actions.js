@@ -29,6 +29,6 @@ export function authUser(email, password) {
             .then((data) => {
                 dispatch(getDataSuccess(data))
             })
-            .catch((err) => { if (err) console.log('err:', err); dispatch(getDataFailure()) })
+            .catch((err) => { if (err) console.log('err:', err.TypeError); dispatch(getDataFailure()) })
     }
 }
