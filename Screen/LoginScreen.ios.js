@@ -14,20 +14,25 @@ export default class LoginScreen extends Component {
     this.state = {
       isErrorPassword: false,
       isErrorEmail: false,
-
+      isError: props.isError,
+      isHasShowError: false
     }
     this.getTextFromComponent = this
       .getTextFromComponent
       .bind(this);
   }
+
+  componentWillUpdate(nextProps) {
+
+  }
+
   componentDidMount() { }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('test', this.props);
+
   }
 
   getTextFromComponent(text, type) {
-    console.log(text);
     switch (type) {
       case 'email':
         var isWrong = this.validateEmail(text);
@@ -54,14 +59,36 @@ export default class LoginScreen extends Component {
     return re.test(email);
   }
 
+  parseBool(b) {
+    if (b === undefined)
+      return true;
+    return !(/^(false|0)$/i).test(b) && !!b;
+  }
+
   validatePassword(pw) {
-    return pw.length > 6;
+    return pw.length > 4;
   }
   render() {
     const isFetching = this.props.isFetching;
-    var authFailed = this.props.data.success;
-    const message = this.props.data.message;
-    authFailed = !authFailed;
+    var authFailed = !this.parseBool(this.props.data.success);
+    var message = this.props.data.message;
+
+    // authFailed = this.state.isError;
+    if (authFailed && this.props.isError) {
+      message = 'Request timeout';
+    }
+    if (message !== undefined) {
+      if (typeof message === 'object') {
+        message = message.map(({ message }) => message + '\n');
+      }
+    }
+    console.log(message);
+    if (!authFailed && !this.state.isHasShowError) {
+      setTimeout(() => {
+        console.log('oi vai cut chay vao day roi ma');
+        this.setState({ isHasShowError: true, isError: false })
+      }, 3000);
+    }
     return (
       <View
         style={{
@@ -115,9 +142,12 @@ export default class LoginScreen extends Component {
               <ActivityIndicator />
             )
               : (
-                <Button title={'Sign In'} onPress={() => this.props.authUser(this.email, this.password)} />
+                <Button title={'Sign In'} onPress={() => {
+                  if (!this.state.isErrorEmail && !this.state.isErrorPassword)
+                    return this.props.authUser(this.email, this.password);
+                }} />
               )}
-            {!authFailed && <Text>{message.map(({ message }) => message + '\n')}</Text>}
+            {authFailed && message !== undefined && <Text>{message}</Text>}
           </View>
 
         </View>

@@ -8,7 +8,7 @@ var instance = axios.create({
 });
 
 instance.defaults.headers.post['Content-Type'] = 'application/json';
-instance.defaults.timeout = 60000;
+instance.defaults.timeout = 10000;
 
 export const cancelRequest = () => {
     cancel();

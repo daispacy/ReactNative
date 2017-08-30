@@ -7,7 +7,7 @@ import { authUser } from '../actions'
 
 const mapStateToProps = state => {
   console.log('mapStateToProps', state.fetch);
-  return { data: state.fetch.data, isFetching: state.fetch.isFetching };
+  return { data: state.fetch.data, isFetching: state.fetch.isFetching, isError: state.fetch.isError };
 }
 
 const mapDispatchToProps = (dispatch) => ({

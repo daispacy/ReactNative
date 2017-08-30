@@ -62,43 +62,25 @@ const initialState = {
 function fetch(state = initialState, action) {
   switch (action.type) {
     case FETCHING_DATA:
-      console.log('sao deo chay vao day nhi');
       return {
         ...state,
         data: [],
         isFetching: true
       }
     case FETCHING_DATA_SUCCESS:
-      console.log('sao deo chay vao day nhi2');
+
       return {
         ...state,
         isFetching: false,
-        data: action.data
+        data: action.data,
+        error: false
       }
     case FETCHING_DATA_FAILURE:
-      console.log('sao deo chay vao day nhi3');
-      return {
-        ...state,
-        isFetching: false,
-        error: true
-      }
-    case HIDE_MESSAGE:
-      return {
-        ...state,
-        isFetching: false,
-        error: true
-      }
-    default:
-      return state
-  }
-}
 
-function handleui(state, action) {
-  switch (action.type) {
-    case HIDE_MESSAGE:
       return {
         ...state,
-        isHide: true
+        isFetching: false,
+        error: true
       }
     default:
       return state
@@ -107,8 +89,7 @@ function handleui(state, action) {
 
 const AppReducer = combineReducers({
   nav,
-  fetch,
-  handleui
+  fetch
 });
 
 export default AppReducer;

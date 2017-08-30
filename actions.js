@@ -11,10 +11,12 @@ export function getDataSuccess(data) {
     return {
         type: FETCHING_DATA_SUCCESS,
         data,
+        error: false
     }
 }
 
 export function getDataFailure() {
+    console.log('call ca get data failure la sao');
     return {
         type: FETCHING_DATA_FAILURE
     }
@@ -27,6 +29,6 @@ export function authUser(email, password) {
             .then((data) => {
                 dispatch(getDataSuccess(data))
             })
-            .catch((err) => console.log('err:', err))
+            .catch((err) => { if (err) console.log('err:', err); dispatch(getDataFailure()) })
     }
 }
