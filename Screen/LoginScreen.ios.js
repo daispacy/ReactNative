@@ -4,6 +4,8 @@ import { View, Button, Text, ActivityIndicator } from 'react-native';
 import InputView from '../components/ControlComponents/InputView';
 import NoticeBanner from '../components/NoticeBanner';
 
+const listMessagesErrorData = ['Please enter a valid email & password.'];
+
 export default class LoginScreen extends Component {
 
   static navigationOptions = {
@@ -15,24 +17,23 @@ export default class LoginScreen extends Component {
     this.state = {
       isErrorPassword: false,
       isErrorEmail: false,
-      isError: props.isError,
-      isHasShowError: false,
+      isError: false,
+      data: [],
+      message: ''
     }
+    this.email = '';
+    this.password = '';
     this.getTextFromComponent = this
       .getTextFromComponent
       .bind(this);
-  }
-
-  componentWillUpdate(nextProps) {
-
   }
 
   componentDidMount() {
 
   }
 
-  componentDidUpdate(prevProps, prevState) {
-
+  componentWillReceiveProps(nextProps) {
+    // console.log('receving: ', nextProps);
   }
 
   getTextFromComponent(text, type) {
@@ -41,7 +42,7 @@ export default class LoginScreen extends Component {
         var isWrong = this.validateEmail(text);
         if (text.length == 0)
           isWrong = true;
-        this.email = text;
+        this.email = text !== undefined ? text : '';
         this.setState({ isErrorEmail: !isWrong });
         break;
 
@@ -49,7 +50,7 @@ export default class LoginScreen extends Component {
         var isWrong = this.validatePassword(text);
         if (text.length == 0)
           isWrong = true;
-        this.password = text;
+        this.password = text !== undefined ? text : '';
         this.setState({ isErrorPassword: !isWrong });
         break;
       default:
@@ -64,34 +65,64 @@ export default class LoginScreen extends Component {
 
   parseBool(b) {
     if (b === undefined)
-      return true;
+      return b;
     return !(/^(false|0)$/i).test(b) && !!b;
   }
 
   validatePassword(pw) {
     return pw.length > 4;
   }
-  render() {
-    const isFetching = this.props.isFetching;
-    var authFailed = !this.parseBool(this.props.data.success);
-    var message = this.props.data.message;
 
-    // authFailed = this.state.isError;
-    if (authFailed && this.props.isError) {
-      message = 'Request timeout';
-    }
-    if (message !== undefined) {
-      if (typeof message === 'object') {
-        message = message.map(({ message }) => message + '\n');
+  validate(onTrue, onFail, isShowAlert) {
+    if (this.email !== undefined && this.password !== undefined) {
+      if (!this.state.isErrorEmail && !this.state.isErrorPassword && this.email.trim().length > 0 && this.password.trim().length > 0) {
+        this.setState({ isError: false, message: undefined });
+        if (onTrue)
+          onTrue();
+        return;
       }
     }
-    console.log(message);
+    if (isShowAlert) {
+
+      var randomIndex = (Math.random() * listMessagesErrorData.length) >> 0;
+      if (this.indexMSG !== randomIndex)
+        this.indexMSG = randomIndex;
+      else
+        this.indexMSG++;
+
+      if (this.indexMSG === undefined || this.indexMSG > listMessagesErrorData.length - 1)
+        this.indexMSG = 0;
+
+      var msg = listMessagesErrorData[this.indexMSG];
+      console.log('random MSG', msg);
+      this.setState({ isError: true, message: msg });
+    }
+    if (onFail)
+      onFail();
+
+  }
+
+  render() {
+    const isFetching = this.props.isFetching;
+    var authFailed = this.parseBool(this.props.data.success);
+    if (!authFailed)
+      authFailed = this.state.isError;
+    const { message } = this.state;
+    var msg = message;
+    const { msgServer } = this.props.data;
+    console.log(msgServer);
+    if (msgServer) {
+      if (typeof msgServer === 'object')
+        msg = msgServer.map(({ message }) => message + '\n' + message + '\n' + message + '\n');
+      else
+        msg = msgServer;
+    }
 
     return (
       <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-start' }}>
-        {authFailed && message !== undefined && <NoticeBanner
-          isError={true}
-          message={message} />}
+        {(authFailed || this.state.isValidData) && message !== undefined && <NoticeBanner
+          isError={authFailed}
+          message={msg} />}
 
         <View
           style={{
@@ -118,17 +149,14 @@ export default class LoginScreen extends Component {
                 identifier={'email'}
                 placeholder={'Email'}
                 isError={this.state.isErrorEmail}
-                onChangeText={(text, type) => {
-                  this.getTextFromComponent(text, type)
-                }} />
+                onChangeText={this.getTextFromComponent}
+              />
               <InputView
                 identifier={'password'}
                 isPassword={true}
                 isError={this.state.isErrorPassword}
                 placeholder={'Password'}
-                onChangeText={(text, type) => {
-                  this.getTextFromComponent(text, type)
-                }} />
+                onChangeText={this.getTextFromComponent} />
             </View>
             <View style={{ height: 40, justifyContent: 'center' }}>
               {isFetching ? (
@@ -136,8 +164,9 @@ export default class LoginScreen extends Component {
               )
                 : (
                   <Button title={'Sign In'} onPress={() => {
-                    if (!this.state.isErrorEmail && !this.state.isErrorPassword)
+                    this.validate(() => {
                       return this.props.authUser(this.email, this.password);
+                    }, null, true)
                   }} />
                 )}
             </View>

@@ -38,7 +38,7 @@ export default class InputView extends Component {
               marginLeft: 10,
               marginRight: 10
             }}
-            onChangeText={(text) => this.onChangeText(text)}
+            onChangeText={this.onChangeText}
             value={this.state.text}
             placeholder={this.props.placeholder} />
         </View>

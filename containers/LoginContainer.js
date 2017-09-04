@@ -6,7 +6,6 @@ import LoginScreen from '../Screen/LoginScreen';
 import { authUser } from '../actions'
 
 const mapStateToProps = state => {
-  console.log('mapStateToProps', state.fetch);
   return { data: state.fetch.data, isFetching: state.fetch.isFetching, isError: state.fetch.isError };
 }
 
