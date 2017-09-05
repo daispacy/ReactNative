@@ -11,11 +11,12 @@ export default class NoticeBanner extends React.Component {
     }
 
     componentDidMount() {
-        this.startAnimation();
+        // this.startAnimation();
     }
 
     componentWillReceiveProps(nextProps) {
-        this.startAnimation();
+        if (nextProps.message !== undefined && nextProps.message !== null && nextProps.message.length > 0)
+            this.startAnimation();
     }
 
     startAnimation() {
@@ -61,10 +62,10 @@ export default class NoticeBanner extends React.Component {
                     flex: 1,
                     justifyContent: 'space-between',
                     top: newy,         // Bind opacity to animated value
-                    marginTop: 24
+
                 }}
             >
-                <Text style={{ marginTop: 10, marginBottom: 10, textAlign: this.props.textAlign || 'center', fontWeight: 'bold', color: this.props.textColor || 'white' }}>
+                <Text style={{ marginTop: 30, marginBottom: 10, textAlign: this.props.textAlign || 'center', fontWeight: 'bold', color: this.props.textColor || 'white' }}>
                     {this.props.message}
                 </Text>
             </Animated.View>

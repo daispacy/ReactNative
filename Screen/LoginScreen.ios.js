@@ -33,29 +33,47 @@ export default class LoginScreen extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // console.log('receving: ', nextProps);
+
+    var msg = '';
+    const msgServer = nextProps.data.message;
+    console.log(msgServer);
+    if (msgServer) {
+      if (typeof msgServer === 'object')
+        msg = msgServer.map(({ message }) => message);
+      else
+        msg = msgServer;
+    }
+    this.setState({ data: nextProps.data.data, isError: !this.parseBool(nextProps.data.success), message: msg });
   }
 
   getTextFromComponent(text, type) {
     switch (type) {
       case 'email':
-        var isWrong = this.validateEmail(text);
-        if (text.length == 0)
-          isWrong = true;
-        this.email = text !== undefined ? text : '';
-        this.setState({ isErrorEmail: !isWrong });
+        this.setStateWhileValidateInput(text, '');
         break;
 
       case 'password':
-        var isWrong = this.validatePassword(text);
-        if (text.length == 0)
-          isWrong = true;
-        this.password = text !== undefined ? text : '';
-        this.setState({ isErrorPassword: !isWrong });
+        this.setStateWhileValidateInput('', text);
         break;
       default:
         break;
     }
+  }
+
+  setStateWhileValidateInput(email, password) {
+
+    var isWrongEmail = this.validateEmail(email);
+    if (email.length == 0)
+      isWrongEmail = true;
+    this.email = email !== undefined ? email : '';
+    this.setState({ isErrorEmail: !isWrongEmail, message: '', isError: false });
+
+    var isWrong = this.validatePassword(password);
+    if (password.length == 0)
+      isWrong = true;
+    this.password = password !== undefined ? password : '';
+    this.setState({ isErrorPassword: !isWrong, message: '', isError: false });
+    // }
   }
 
   validateEmail(email) {
@@ -104,25 +122,13 @@ export default class LoginScreen extends Component {
 
   render() {
     const isFetching = this.props.isFetching;
-    var authFailed = this.parseBool(this.props.data.success);
-    if (!authFailed)
-      authFailed = this.state.isError;
+    var authFailed = this.state.isError;
     const { message } = this.state;
-    var msg = message;
-    const { msgServer } = this.props.data;
-    console.log(msgServer);
-    if (msgServer) {
-      if (typeof msgServer === 'object')
-        msg = msgServer.map(({ message }) => message + '\n' + message + '\n' + message + '\n');
-      else
-        msg = msgServer;
-    }
-
     return (
       <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-start' }}>
-        {(authFailed || this.state.isValidData) && message !== undefined && <NoticeBanner
+        <NoticeBanner
           isError={authFailed}
-          message={msg} />}
+          message={message} />
 
         <View
           style={{
